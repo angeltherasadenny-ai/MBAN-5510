@@ -1,4 +1,5 @@
 # MedlinePlus RAG Chat (Project 2)
+# Author: Angel Denny
 
 A Retrieval-Augmented Generation (RAG) chatbot that answers medical questions using **ONLY trusted MedlinePlus content**.
 
@@ -165,6 +166,6 @@ License
 This project is open for educational use.
 (You can add an MIT License if you want.)
 
-##Author: Angel Denny
 
 ---
+
