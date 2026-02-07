@@ -1,1 +1,2 @@
-# Welcome! This repository showcases my academic and personal projects, including code, documentation, and results. Everything is organized by folder so you can quickly explore each project and understand how it works.
+# Welcome! This repository showcases my academic and personal projects, including code, documentation, and results. Everything is organized by folder so you can quickly explore each project and understand how it works. 😁
+
