@@ -1,4 +1,6 @@
-# Project 1 — Travel Planner Agent (LangChain + LangGraph)
+# Travel Planner Agent (LangChain + LangGraph) - Project1
+## Author: **Angel Denny**
+
 
 This project is a travel-planning assistant built using **LangChain** and **LangGraph**.  
 It takes a raw “hard-mode” itinerary input, resolves real attraction addresses using **Google Places**, retrieves **Weather** and **Air Quality** data using Google APIs, and outputs a clean final itinerary.
@@ -345,6 +347,6 @@ This usually means:
 6. Copy the key into your `.env`
 ---
 
-## Author
-Project by: **Angel Denny**
+
+
 
