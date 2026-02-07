@@ -165,5 +165,6 @@ License
 This project is open for educational use.
 (You can add an MIT License if you want.)
 
+##Author: Angel Denny
 
 ---
