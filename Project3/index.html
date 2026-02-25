@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Research Email Assistant</title>
+
+  <style>
+    :root{
+      /* Spring theme */
+      --ink:#0f172a;
+      --muted: rgba(15,23,42,.62);
+      --card: rgba(255,255,255,.80);
+      --line: rgba(15,23,42,.10);
+      --shadow: 0 18px 60px rgba(15,23,42,.14);
+      --radius: 24px;
+
+      /* Spring accents (pastel but readable) */
+      --blue:#60a5fa;     /* soft sky */
+      --purple:#c4b5fd;   /* lavender */
+      --pink:#f9a8d4;     /* cherry blossom */
+      --orange:#fdba74;   /* soft peach */
+      --green:#86efac;    /* mint */
+      --yellow:#fde68a;   /* butter yellow */
+      --teal:#5eead4;     /* aqua */
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--ink);
+
+      /* Spring background */
+      background:
+        radial-gradient(1200px 900px at 10% 10%, rgba(96,165,250,.25), transparent 60%),
+        radial-gradient(1000px 800px at 90% 15%, rgba(249,168,212,.22), transparent 55%),
+        radial-gradient(1100px 850px at 70% 90%, rgba(134,239,172,.22), transparent 60%),
+        radial-gradient(900px 700px at 20% 85%, rgba(253,230,138,.18), transparent 60%),
+        linear-gradient(180deg, #fff7fb, #f0fdf4 45%, #eff6ff);
+
+      overflow-x:hidden;
+    }
+
+    /* Floating blobs */
+    .blob{
+      position:fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 999px;
+      filter: blur(45px);
+      opacity: .50;
+      z-index:-1;
+      animation: floaty 10s ease-in-out infinite;
+    }
+    .b1{ left:-140px; top:60px; background: rgba(196,181,253,.45); }
+    .b2{ right:-160px; top:90px; background: rgba(96,165,250,.40); animation-delay: -2.5s; }
+    .b3{ left: 25%; bottom:-220px; background: rgba(249,168,212,.42); animation-delay: -5s; }
+
+    @keyframes floaty{
+      0%,100%{ transform: translateY(0) translateX(0) scale(1); }
+      50%{ transform: translateY(-18px) translateX(10px) scale(1.03); }
+    }
+
+    .wrap{
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 32px 18px 70px;
+    }
+
+    .hero{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom: 18px;
+    }
+
+    .title{
+      font-size: 2.35rem;
+      line-height:1.08;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      margin:0;
+    }
+
+    .subtitle{
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 62ch;
+      font-size: 1.04rem;
+    }
+
+    .pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
+      align-items:flex-end;
+    }
+
+    .pill{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.75);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: .92rem;
+      color: rgba(15,23,42,.72);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 28px rgba(15,23,42,.10);
+      display:flex;
+      gap:8px;
+      align-items:center;
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background: rgba(15,23,42,.18);
+      flex: 0 0 auto;
+    }
+
+    .card{
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow:hidden;
+    }
+
+    .cardTop{
+      padding: 14px 18px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+
+    .badge{
+      font-size: .86rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.75);
+      color: rgba(15,23,42,.70);
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .gradientBar{
+      height: 10px;
+      background: linear-gradient(
+        90deg,
+        rgba(96,165,250,.95),
+        rgba(196,181,253,.95),
+        rgba(249,168,212,.95),
+        rgba(253,186,116,.95),
+        rgba(134,239,172,.95),
+        rgba(94,234,212,.95)
+      );
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    @media (min-width: 900px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .span2{ grid-column: 1 / -1; }
+    }
+
+    .section{ padding: 16px 18px 18px; }
+
+    label{
+      display:block;
+      margin: 10px 0 6px;
+      color: var(--muted);
+      font-size: .92rem;
+      font-weight: 650;
+    }
+
+    input, textarea{
+      width:100%;
+      border: 1px solid rgba(15,23,42,.12);
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      border-radius: 16px;
+      padding: 12px 12px;
+      outline:none;
+      font-size: 0.98rem;
+      transition: border-color .18s ease, transform .12s ease, box-shadow .18s ease;
+    }
+
+    textarea{
+      min-height: 300px;
+      resize: vertical;
+      line-height: 1.38;
+      white-space: pre-wrap;
+    }
+
+    input:focus, textarea:focus{
+      border-color: rgba(96,165,250,.65);
+      box-shadow: 0 0 0 4px rgba(96,165,250,.18);
+      transform: translateY(-1px);
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 12px;
+    }
+
+    .btn{
+      border: none;
+      border-radius: 16px;
+      padding: 11px 14px;
+      font-weight: 850;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, filter .15s ease, box-shadow .15s ease;
+      box-shadow: 0 14px 30px rgba(15,23,42,.12);
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+    .btn:active{ transform: translateY(0); filter: brightness(0.98); }
+
+    /* Spring buttons */
+    .btn.blue{ background: linear-gradient(135deg, #93c5fd, #3b82f6); color:#0b1320; }
+    .btn.purple{ background: linear-gradient(135deg, #ddd6fe, #a78bfa); color:#0b1320; }
+    .btn.green{ background: linear-gradient(135deg, #bbf7d0, #4ade80); color:#0b1320; }
+    .btn.orange{ background: linear-gradient(135deg, #fed7aa, #fb923c); color:#0b1320; }
+    .btn.gray{ background: rgba(255,255,255,.9); border: 1px solid rgba(15,23,42,.10); color: rgba(15,23,42,.82); }
+
+    .hint{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .status{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.85);
+      color: rgba(15,23,42,.78);
+      font-size: .95rem;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .status .dot{ margin-top: 5px; }
+    .status.ok .dot{ background: #22c55e; }
+    .status.warn .dot{ background: #f59e0b; }
+    .status.bad .dot{ background: #ef4444; }
+
+    .footer{
+      margin-top: 14px;
+      color: rgba(15,23,42,.55);
+      font-size: .88rem;
+      text-align:center;
+    }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .92rem;
+      color: rgba(15,23,42,.65);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1 class="title">🌸 Research Email Assistant</h1>
+        <p class="subtitle">
+          Generate a neat research-project email draft, edit it (human approval), then send it to your test receiver.
+        </p>
+      </div>
+
+      <div class="pills">
+        <div class="pill"><span class="dot" style="background:var(--pink)"></span> HITL: you click Send</div>
+        <div class="pill"><span class="dot" style="background:var(--blue)"></span> API <span class="mono">127.0.0.1:5000</span></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: student details -->
+      <div class="card">
+        <div class="gradientBar"></div>
+        <div class="cardTop">
+          <div class="badge"><span class="dot" style="background:var(--purple)"></span> Your details</div>
+          <div class="badge"><span class="dot" style="background:var(--teal)"></span> Draft → Edit → Send</div>
+        </div>
+
+        <div class="section">
+          <label for="name">Name</label>
+          <input id="name" placeholder="Angel Denny" />
+
+          <label for="program">Program</label>
+          <input id="program" placeholder="MBAN" />
+
+          <label for="uni">University</label>
+          <input id="uni" placeholder="Saint Mary's University" />
+
+          <div class="row">
+            <button class="btn gray" id="btnResearch">🔎 Research</button>
+            <button class="btn purple" id="btnGenerate">✨ Generate</button>
+            <button class="btn blue" id="btnRegen">🔄 Regenerate</button>
+          </div>
+
+          <div class="hint">
+            “Regenerate” gives you a new variation. You can still edit the draft before sending.
+          </div>
+
+          <div id="statusBox" class="status">
+            <div class="dot"></div>
+            <div id="statusText">Ready. Click <b>Generate</b> to create your email.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: settings -->
+      <div class="card">
+        <div class="gradientBar"></div>
+        <div class="cardTop">
+          <div class="badge"><span class="dot" style="background:var(--orange)"></span> Send settings</div>
+          <div class="badge"><span class="dot" style="background:var(--green)"></span> Test mode</div>
+        </div>
+
+        <div class="section">
+          <label for="receiver">Receiver</label>
+          <input id="receiver" placeholder="Michael.Zhang@smu.ca" disabled />
+
+          <label for="apiBase">API Base URL</label>
+          <input id="apiBase" value="http://127.0.0.1:5000" />
+
+          <div class="row">
+            <button class="btn orange" id="btnClear">🧹 Clear</button>
+            <button class="btn green" id="btnSend">📨 Send</button>
+          </div>
+
+          <div class="hint">
+            Backend sends only to the test receiver from <span class="mono">.env</span>.
+          </div>
+        </div>
+      </div>
+
+      <!-- Draft editor -->
+      <div class="card span2">
+        <div class="gradientBar"></div>
+        <div class="cardTop">
+          <div class="badge"><span class="dot" style="background:var(--pink)"></span> Email draft</div>
+          <div class="badge"><span class="dot" style="background:var(--blue)"></span> Human approval = editing here</div>
+        </div>
+
+        <div class="section">
+          <label for="subject">Subject</label>
+          <input id="subject" placeholder="Research Project Interest – Angel Denny" />
+
+          <label for="body">Body</label>
+          <textarea id="body" placeholder="Click Generate..."></textarea>
+
+          <div class="hint">
+            Review + edit the subject/body before clicking <b>Send</b>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Built for your assignment: research → draft → human approval → send (test).
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function setStatus(kind, msg){
+      const box = $("statusBox");
+      box.classList.remove("ok", "warn", "bad");
+      if(kind) box.classList.add(kind);
+      $("statusText").innerHTML = msg;
+    }
+
+    function getStudent(){
+      return {
+        name: $("name").value.trim(),
+        program: $("program").value.trim(),
+        university: $("uni").value.trim(),
+      };
+    }
+
+    async function postJSON(path, payload){
+      const base = $("apiBase").value.trim().replace(/\/+$/,'');
+      const url = `${base}${path}`;
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload || {})
+      });
+
+      let data = null;
+      try { data = await res.json(); } catch(e) {}
+
+      if(!res.ok){
+        const err = (data && (data.error || data.message))
+          ? (data.error || data.message)
+          : `Request failed (${res.status})`;
+        throw new Error(err);
+      }
+
+      return data;
+    }
+
+    // Prefill
+    $("name").value = "Angel Denny";
+    $("program").value = "MBAN";
+    $("uni").value = "Saint Mary's University";
+    $("receiver").value = "Michael.Zhang@smu.ca";
+
+    $("btnResearch").addEventListener("click", async () => {
+      try{
+        setStatus("warn", "Researching profile…");
+        const data = await postJSON("/api/research", {});
+        const prof = data?.professor_name || "Michael Zhang";
+        setStatus("ok", `Profile researched. Professor: <b>${prof}</b>.`);
+      }catch(err){
+        setStatus("bad", `Research failed: ${err.message}`);
+      }
+    });
+
+    async function generateDraft(isRegen){
+      try{
+        setStatus("warn", isRegen ? "Regenerating draft…" : "Generating draft…");
+        const student = getStudent();
+
+        if(!student.name || !student.program || !student.university){
+          setStatus("bad", "Please fill in Name, Program, and University.");
+          return;
+        }
+
+        const data = await postJSON("/api/draft", { student, regenerate: !!isRegen });
+
+        $("subject").value = data?.subject || "";
+        $("body").value = data?.body || "";
+
+        setStatus("ok", "Draft ready 🎉 Review/edit it, then click <b>Send</b>.");
+      }catch(err){
+        setStatus("bad", `Draft failed: ${err.message}`);
+      }
+    }
+
+    $("btnGenerate").addEventListener("click", () => generateDraft(false));
+    $("btnRegen").addEventListener("click", () => generateDraft(true));
+
+    $("btnClear").addEventListener("click", () => {
+      $("subject").value = "";
+      $("body").value = "";
+      setStatus("", "Draft cleared.");
+    });
+
+    $("btnSend").addEventListener("click", async () => {
+      try{
+        const subject = $("subject").value.trim();
+        const body = $("body").value.trim();
+
+        if(!subject || !body){
+          setStatus("bad", "Subject and body cannot be empty.");
+          return;
+        }
+
+        setStatus("warn", "Sending email to test receiver…");
+
+        const data = await postJSON("/api/send", { subject, body });
+
+        const to = data?.to || "test receiver";
+        setStatus("ok", `Sent successfully 💌 to <b>${to}</b>.`);
+      }catch(err){
+        setStatus("bad", `Send failed: ${err.message}`);
+      }
+    });
+  </script>
+</body>
+</html>
